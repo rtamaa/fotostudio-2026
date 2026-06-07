@@ -2,68 +2,46 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\UserRole;
+use App\Models\Booking;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar
+class User extends Authenticatable implements FilamentUser
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory,HasRoles, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
-        'avatar_url',
         'name',
         'email',
+        'phone',
         'password',
+        'role',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'role' => UserRole::class,
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    public function isAdmin(): bool
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-
-    public function getFilamentAvatarUrl(): ?string
-    {
-        if ($this->avatar_url) {
-            return asset('storage/' . $this->avatar_url);
-        } else {
-            $hash = md5(strtolower(trim($this->email)));
-
-            return 'https://www.gravatar.com/avatar/' . $hash . '?d=mp&r=g&s=250';
-        }
+        return $this->role === UserRole::ADMIN;
     }
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        // bisa pakai salah satu:
+        return $this->hasRole('admin'); // 🔥 ini sekarang valid
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2871a81c9326173fde300989b7cc9fd4",
+    "content-hash": "4f349be46712691c2b95ad05a7d5eab0",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -3887,36 +3887,36 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.6.2",
+            "version": "v3.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "8f8914731f5eb43b6bb145d87c8d5a9edfc89313"
+                "reference": "0a7c2ec6c5c958cab32870ce5a7836a2fca0b459"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/8f8914731f5eb43b6bb145d87c8d5a9edfc89313",
-                "reference": "8f8914731f5eb43b6bb145d87c8d5a9edfc89313",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/0a7c2ec6c5c958cab32870ce5a7836a2fca0b459",
+                "reference": "0a7c2ec6c5c958cab32870ce5a7836a2fca0b459",
                 "shasum": ""
             },
             "require": {
-                "illuminate/database": "^10.0|^11.0|^12.0",
-                "illuminate/routing": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "illuminate/validation": "^10.0|^11.0|^12.0",
+                "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/routing": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/validation": "^10.0|^11.0|^12.0|^13.0",
                 "laravel/prompts": "^0.1.24|^0.2|^0.3",
                 "league/mime-type-detection": "^1.9",
                 "php": "^8.1",
-                "symfony/console": "^6.0|^7.0",
-                "symfony/http-kernel": "^6.2|^7.0"
+                "symfony/console": "^6.0|^7.0|^8.0",
+                "symfony/http-kernel": "^6.2|^7.0|^8.0"
             },
             "require-dev": {
                 "calebporzio/sushi": "^2.1",
-                "laravel/framework": "^10.15.0|^11.0|^12.0",
+                "laravel/framework": "^10.15.0|^11.0|^12.0|^13.0",
                 "mockery/mockery": "^1.3.1",
-                "orchestra/testbench": "^8.21.0|^9.0|^10.0",
-                "orchestra/testbench-dusk": "^8.24|^9.1|^10.0",
-                "phpunit/phpunit": "^10.4|^11.5",
+                "orchestra/testbench": "^8.21.0|^9.0|^10.0|^11.0",
+                "orchestra/testbench-dusk": "^8.24|^9.1|^10.0|^11.0",
+                "phpunit/phpunit": "^10.4|^11.5|^12.5",
                 "psy/psysh": "^0.11.22|^0.12"
             },
             "type": "library",
@@ -3951,7 +3951,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.6.2"
+                "source": "https://github.com/livewire/livewire/tree/v3.8.1"
             },
             "funding": [
                 {
@@ -3959,7 +3959,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-03-12T20:24:15+00:00"
+            "time": "2026-06-02T08:18:44+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -4027,6 +4027,67 @@
                 "source": "https://github.com/Masterminds/html5-php/tree/2.9.0"
             },
             "time": "2024-03-31T07:05:07+00:00"
+        },
+        {
+            "name": "midtrans/midtrans-php",
+            "version": "2.6.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Midtrans/midtrans-php.git",
+                "reference": "8ed7fc58ff1ababe675da17acf8233f4028eb3be"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Midtrans/midtrans-php/zipball/8ed7fc58ff1ababe675da17acf8233f4028eb3be",
+                "reference": "8ed7fc58ff1ababe675da17acf8233f4028eb3be",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "5.7.*",
+                "psy/psysh": "0.4.*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SnapBi\\": "SnapBi/",
+                    "Midtrans\\": "Midtrans/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Andri Setiawan",
+                    "email": "andri.setiawan@veritrans.co.id"
+                },
+                {
+                    "name": "Alvin Litani",
+                    "email": "alvin.litani@veritrans.co.id"
+                },
+                {
+                    "name": "Ismail Faruqi",
+                    "email": "ismail.faruqi@veritrans.co.id"
+                },
+                {
+                    "name": "Muhammad Fauzi Masykur",
+                    "email": "muhammad.masykur@gojek.com"
+                }
+            ],
+            "description": "PHP Wrapper for Midtrans Payment API.",
+            "homepage": "https://midtrans.com",
+            "support": {
+                "issues": "https://github.com/Midtrans/midtrans-php/issues",
+                "source": "https://github.com/Midtrans/midtrans-php/tree/v2.6.2"
+            },
+            "time": "2025-03-18T06:30:17+00:00"
         },
         {
             "name": "mobiledetect/mobiledetectlib",
@@ -12364,5 +12425,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }

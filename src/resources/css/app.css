@@ -2,3 +2,445 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+/* ============================================
+   1. ANIMASI DASAR
+   ============================================ */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes bounce-slow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { 
+        box-shadow: 0 0 5px rgba(236, 72, 153, 0.3);
+        opacity: 1;
+    }
+    50% { 
+        box-shadow: 0 0 20px rgba(236, 72, 153, 0.6);
+        opacity: 0.9;
+    }
+}
+
+@keyframes wiggle {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    75% { transform: rotate(5deg); }
+}
+
+@keyframes slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-in-left {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0;
+    }
+}
+
+@keyframes loading-pulse {
+    0%, 100% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* ============================================
+   2. UTILITY CLASSES
+   ============================================ */
+.floating-emoji {
+    animation: float 3s ease-in-out infinite;
+}
+
+.bounce-emoji {
+    animation: bounce-slow 2s ease-in-out infinite;
+}
+
+.spin-emoji {
+    animation: spin-slow 8s linear infinite;
+}
+
+.shake-emoji:hover {
+    animation: shake 0.5s ease-in-out;
+}
+
+.wiggle-emoji:hover {
+    animation: wiggle 0.3s ease-in-out;
+}
+
+.card-hover {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+.btn-pulse {
+    animation: pulse-glow 1.5s ease-in-out infinite;
+}
+
+.btn-pulse:hover {
+    animation: none;
+    transform: scale(1.05);
+}
+
+/* ============================================
+   3. SCROLL REVEAL
+   ============================================ */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================
+   4. EFEK BORDER & GRADIENT
+   ============================================ */
+.gradient-border {
+    position: relative;
+    background: linear-gradient(white, white) padding-box,
+                linear-gradient(135deg, #ec4899, #f43f5e) border-box;
+    border: 2px solid transparent;
+    border-radius: 1rem;
+}
+
+.gradient-border:hover {
+    background: linear-gradient(135deg, #ec4899, #f43f5e) padding-box,
+                linear-gradient(135deg, #ec4899, #f43f5e) border-box;
+    color: white;
+}
+
+.text-stroke-white {
+    -webkit-text-stroke: 1px white;
+    text-stroke: 1px white;
+}
+
+.gradient-bg-animate {
+    background: linear-gradient(270deg, #ec4899, #f43f5e, #fb7185, #ec4899);
+    background-size: 300% 300%;
+    animation: gradient-shift 6s ease infinite;
+}
+
+/* ============================================
+   5. GLASSMORPHISM
+   ============================================ */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-effect-dark {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ============================================
+   6. EFEK KERTAS ROBEK
+   ============================================ */
+.rip-effect {
+    position: relative;
+}
+
+.rip-effect::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: radial-gradient(ellipse at center, transparent 30%, white 70%);
+    filter: blur(3px);
+}
+
+/* ============================================
+   7. LOADING DOTS
+   ============================================ */
+.loading-dots span {
+    animation: loading-pulse 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+/* ============================================
+   8. CONFETTI
+   ============================================ */
+.confetti {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confetti-fall 3s ease-in-out forwards;
+}
+
+/* ============================================
+   9. CUSTOM SCROLLBAR
+   ============================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ec4899;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #f43f5e;
+}
+
+/* ============================================
+   10. SELECTION COLOR
+   ============================================ */
+::selection {
+    background: #ec4899;
+    color: white;
+}
+
+::-moz-selection {
+    background: #ec4899;
+    color: white;
+}
+
+/* ============================================
+   11. EFEK TOMBOL FUN
+   ============================================ */
+.btn-fun {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-fun::before {
+    content: '✨';
+    position: absolute;
+    left: -20px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.btn-fun:hover::before {
+    left: 10px;
+    opacity: 1;
+}
+
+.btn-fun:hover {
+    padding-left: 40px;
+}
+
+/* ============================================
+   12. RIPPLE EFFECT (Untuk Tombol)
+   ============================================ */
+.ripple {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s;
+}
+
+.ripple:active:after {
+    width: 200%;
+    height: 200%;
+}
+
+/* ============================================
+   13. NEON GLOW
+   ============================================ */
+.neon-glow {
+    text-shadow: 0 0 5px #ec4899, 0 0 10px #ec4899, 0 0 20px #ec4899;
+}
+
+.neon-border {
+    box-shadow: 0 0 5px #ec4899, 0 0 10px #ec4899;
+    transition: all 0.3s ease;
+}
+
+.neon-border:hover {
+    box-shadow: 0 0 10px #ec4899, 0 0 20px #ec4899, 0 0 30px #ec4899;
+}
+
+/* ============================================
+   14. BADGE & STICKER
+   ============================================ */
+.sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.sticker-popular {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    transform: rotate(12deg);
+}
+
+.sticker-new {
+    background: linear-gradient(135deg, #34d399, #10b981);
+    color: white;
+    transform: rotate(-8deg);
+}
+
+/* ============================================
+   15. CARD FLIP EFFECT
+   ============================================ */
+.card-flip {
+    perspective: 1000px;
+}
+
+.card-flip-inner {
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.card-flip:hover .card-flip-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    backface-visibility: hidden;
+}
+
+.card-back {
+    transform: rotateY(180deg);
+}
+
+/* ============================================
+   16. RESPONSIVE FONT SIZE
+   ============================================ */
+@media (max-width: 640px) {
+    h1 {
+        font-size: 2rem !important;
+    }
+    .text-7xl {
+        font-size: 3rem !important;
+    }
+}
+
+/* ============================================
+   17. EFEK TAMBAHAN (Opsional)
+   ============================================ */
+.blur-load {
+    filter: blur(10px);
+    transition: filter 0.3s ease;
+}
+
+.blur-load.loaded {
+    filter: blur(0);
+}
+
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading-pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================
+   18. DARK MODE ADAPTATION
+   ============================================ */
+@media (prefers-color-scheme: dark) {
+    .gradient-border {
+        background: linear-gradient(#1a1a1a, #1a1a1a) padding-box,
+                    linear-gradient(135deg, #ec4899, #f43f5e) border-box;
+    }
+    
+    .rip-effect::after {
+        background: radial-gradient(ellipse at center, transparent 30%, #1a1a1a 70%);
+    }
+}
