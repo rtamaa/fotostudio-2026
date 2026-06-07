@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Enums\PaymentStatus;
-use App\Models\Booking;
 
 class Payment extends Model
 {
@@ -39,7 +38,6 @@ class Payment extends Model
     // =========================
     // STATUS HELPERS
     // =========================
-
     public function isSuccess(): bool
     {
         return $this->status === PaymentStatus::SUCCESS;
@@ -53,5 +51,13 @@ class Payment extends Model
     public function isFailed(): bool
     {
         return $this->status === PaymentStatus::FAILED;
+    }
+
+    // =========================
+    // ACCESSOR (INI YANG BIKIN FILAMENT LEBIH AMAN)
+    // =========================
+    public function getStatusLabelAttribute(): string
+    {
+        return $this->status?->label() ?? '-';
     }
 }

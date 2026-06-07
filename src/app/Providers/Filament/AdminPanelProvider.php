@@ -48,22 +48,28 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\\Filament\\Admin\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+
+            // 🔥 FIX DASHBOARD TIDAK KOSONG
             ->widgets([
                 \Awcodes\Overlook\Widgets\OverlookWidget::class,
+
+                // ✔ TAMBAHAN WIDGET KAMU
+                \App\Filament\Admin\Widgets\BookingStats::class,
+                \App\Filament\Admin\Widgets\PaymentStats::class,
             ])
+
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Administration'),
             ])
+
             ->userMenuItems([
                 'profile' => MenuItem::make()
                     ->label(fn () => auth()->user()->name)
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle'),
-                // 'profile' => \Filament\Navigation\MenuItem::make()
-                //     ->label(fn () => auth()->user()->name)
-                //     ->icon('heroicon-m-user-circle'),
             ])
+
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
                     ->gridColumns([
@@ -79,24 +85,33 @@ class AdminPanelProvider extends PanelProvider
                         'default' => 2,
                         'lg' => 3,
                     ]),
+
                 \Hasnayeen\Themes\ThemesPlugin::make(),
-                \Njxqlus\FilamentProgressbar\FilamentProgressbarPlugin::make()->color('#29b'),
+
+                \Njxqlus\FilamentProgressbar\FilamentProgressbarPlugin::make()
+                    ->color('#29b'),
+
                 \DiogoGPinto\AuthUIEnhancer\AuthUIEnhancerPlugin::make()
                     ->showEmptyPanelOnMobile(false)
                     ->formPanelPosition('right')
                     ->formPanelWidth('40%')
                     ->emptyPanelBackgroundImageOpacity('70%')
                     ->emptyPanelBackgroundImageUrl('https://picsum.photos/seed/picsum/1260/750.webp/?blur=1'),
+
                 \Awcodes\LightSwitch\LightSwitchPlugin::make()
                     ->position(\Awcodes\LightSwitch\Enums\Alignment::BottomCenter)
                     ->enabledOn([
                         'auth.login',
                         'auth.password',
                     ]),
+
                 \Awcodes\Overlook\OverlookPlugin::make()
                     ->includes([
                         \App\Filament\Admin\Resources\UserResource::class,
+                        \App\Filament\Admin\Resources\BookingResource::class,
+                        \App\Filament\Admin\Resources\PaymentResource::class,
                     ]),
+
                 \Joaopaulolndev\FilamentEditProfile\FilamentEditProfilePlugin::make()
                     ->slug('my-profile')
                     ->setTitle('My Profile')
@@ -106,10 +121,13 @@ class AdminPanelProvider extends PanelProvider
                     ->shouldShowBrowserSessionsForm()
                     ->shouldShowAvatarForm(),
             ])
+
             ->resources([
                 config('filament-logger.activity_resource'),
             ])
+
             ->viteTheme('resources/css/filament/admin/theme.css')
+
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
@@ -122,6 +140,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class,
             ])
+
             ->authMiddleware([
                 Authenticate::class,
             ]);

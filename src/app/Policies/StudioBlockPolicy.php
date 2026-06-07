@@ -9,11 +9,11 @@ class StudioBlockPolicy
 {
     public function create(User $user): bool
     {
-        return $user->isAdmin();
+        return $user->hasRole('admin');
     }
 
     public function delete(User $user, StudioBlock $studioBlock): bool
     {
-        return $user->isAdmin();
+        return $user->hasRole('admin');
     }
 }

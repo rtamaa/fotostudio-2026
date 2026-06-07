@@ -4,11 +4,10 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\PaymentResource\Pages;
 use App\Models\Payment;
-use App\Models\Booking;
 use App\Enums\PaymentStatus;
+use Filament\Resources\Resource;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -20,46 +19,39 @@ class PaymentResource extends Resource
     protected static ?string $navigationGroup = 'Transaksi';
 
     // =========================
-    // FORM (INI YANG KAMU KURANG)
+    // FORM
     // =========================
     public static function form(Form $form): Form
     {
         return $form->schema([
             Forms\Components\Select::make('booking_id')
-                ->label('Booking')
                 ->relationship('booking', 'id')
                 ->searchable()
+                ->preload()
                 ->required(),
 
             Forms\Components\TextInput::make('order_id')
                 ->required()
-                ->unique(ignoreRecord: true),
+                ->maxLength(255),
 
             Forms\Components\TextInput::make('transaction_id')
-                ->nullable(),
+                ->maxLength(255),
 
-            Forms\Components\Select::make('payment_type')
-                ->options([
-                    'cash' => 'Cash',
-                    'midtrans' => 'Midtrans',
-                    'transfer' => 'Transfer',
-                ])
-                ->nullable(),
+            Forms\Components\TextInput::make('payment_type')
+                ->maxLength(255),
 
             Forms\Components\TextInput::make('gross_amount')
                 ->numeric()
                 ->required(),
 
             Forms\Components\Select::make('status')
-                ->options(collect(PaymentStatus::cases())
-                    ->mapWithKeys(fn ($status) => [
-                        $status->value => $status->label(),
-                    ])->toArray())
-                ->default(PaymentStatus::PENDING->value)
+                ->options(
+                    collect(PaymentStatus::cases())
+                        ->mapWithKeys(fn ($s) => [$s->value => $s->label()])
+                )
                 ->required(),
 
-            Forms\Components\DateTimePicker::make('paid_at')
-                ->nullable(),
+            Forms\Components\DateTimePicker::make('paid_at'),
         ]);
     }
 
@@ -71,7 +63,6 @@ class PaymentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('order_id')
-                    ->label('Order ID')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('booking.user.name')
@@ -83,15 +74,14 @@ class PaymentResource extends Resource
                 Tables\Columns\BadgeColumn::make('status')
                     ->colors([
                         'success' => 'success',
-                        'warning' => 'pending',
-                        'danger' => 'failed',
+                        'warning' => 'warning',
+                        'danger'  => 'danger',
                     ])
-                    ->formatStateUsing(
-                        fn ($state) =>
-                            $state instanceof PaymentStatus
-                                ? $state->label()
-                                : PaymentStatus::from($state)->label()
-                    ),
+                    ->formatStateUsing(function ($state) {
+                        return $state instanceof PaymentStatus
+                            ? $state->label()
+                            : PaymentStatus::from($state)->label();
+                    }),
 
                 Tables\Columns\TextColumn::make('paid_at')
                     ->dateTime('d M Y H:i'),
@@ -105,8 +95,9 @@ class PaymentResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPayments::route('/'),
+            'index'  => Pages\ListPayments::route('/'),
             'create' => Pages\CreatePayment::route('/create'),
+            'edit'   => Pages\EditPayment::route('/{record}/edit'),
         ];
     }
 }
