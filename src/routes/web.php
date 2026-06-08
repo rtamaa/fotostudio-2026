@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 
@@ -9,9 +11,22 @@ use App\Livewire\Booking\BookingHistory;
 use App\Livewire\Booking\UploadPaymentProof;
 use App\Livewire\Profile\ProfileForm;
 
-// Guest
-Route::middleware('guest')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| Public Home
+|--------------------------------------------------------------------------
+*/
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes (belum login)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
@@ -23,9 +38,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [RegisteredUserController::class, 'store']);
 });
 
-// Auth
-Route::middleware(['auth'])->group(function () {
-
+Route::middleware('auth')->group(function () {
     Route::get('/booking/calendar', Calendar::class)
         ->name('booking.calendar');
 
@@ -35,21 +48,21 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', ProfileForm::class)
         ->name('profile.edit');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Upload Bukti Pembayaran
-    |--------------------------------------------------------------------------
-    */
-    Route::get(
-        '/booking/{booking}/payment-upload',
-        UploadPaymentProof::class
-    )->name('payment.upload');
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+        ->name('logout');
 });
 
-// Public
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->name('logout');
+/*
+|--------------------------------------------------------------------------
+| DEBUG ROUTE (WAJIB DI LUAR middleware auth/guest)
+|--------------------------------------------------------------------------
+*/
+Route::get('/debug-auth', function () {
+    return response()->json([
+        'auth' => Auth::check(),
+        'user' => Auth::user(),
+        'session_id' => session()->getId(),
+        'cookies' => request()->cookies->all(),
+    ]);
+});

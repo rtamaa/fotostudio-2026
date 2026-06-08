@@ -3,10 +3,10 @@
 namespace App\Policies;
 
 use App\Models\User;
-use App\Models\StudioBlock;
+use App\Models\Payment;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class StudioBlockPolicy
+class PaymentPolicy
 {
     use HandlesAuthorization;
 
@@ -15,15 +15,15 @@ class StudioBlockPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->can('view_any_studio::block');
+        return $user->can('view_any_payment');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, StudioBlock $studioBlock): bool
+    public function view(User $user, Payment $payment): bool
     {
-        return $user->can('view_studio::block');
+        return $user->can('view_payment');
     }
 
     /**
@@ -31,23 +31,23 @@ class StudioBlockPolicy
      */
     public function create(User $user): bool
     {
-        return $user->can('create_studio::block');
+        return $user->can('create_payment');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, StudioBlock $studioBlock): bool
+    public function update(User $user, Payment $payment): bool
     {
-        return $user->can('update_studio::block');
+        return $user->can('update_payment');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, StudioBlock $studioBlock): bool
+    public function delete(User $user, Payment $payment): bool
     {
-        return $user->can('delete_studio::block');
+        return $user->can('delete_payment');
     }
 
     /**
@@ -55,13 +55,13 @@ class StudioBlockPolicy
      */
     public function deleteAny(User $user): bool
     {
-        return $user->can('delete_any_studio::block');
+        return $user->can('delete_any_payment');
     }
 
     /**
      * Determine whether the user can permanently delete.
      */
-    public function forceDelete(User $user, StudioBlock $studioBlock): bool
+    public function forceDelete(User $user, Payment $payment): bool
     {
         return $user->can('{{ ForceDelete }}');
     }
@@ -77,7 +77,7 @@ class StudioBlockPolicy
     /**
      * Determine whether the user can restore.
      */
-    public function restore(User $user, StudioBlock $studioBlock): bool
+    public function restore(User $user, Payment $payment): bool
     {
         return $user->can('{{ Restore }}');
     }
@@ -93,7 +93,7 @@ class StudioBlockPolicy
     /**
      * Determine whether the user can replicate.
      */
-    public function replicate(User $user, StudioBlock $studioBlock): bool
+    public function replicate(User $user, Payment $payment): bool
     {
         return $user->can('{{ Replicate }}');
     }

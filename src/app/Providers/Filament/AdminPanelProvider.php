@@ -49,11 +49,8 @@ class AdminPanelProvider extends PanelProvider
             ->discoverClusters(in: app_path('Filament/Admin/Clusters'), for: 'App\\Filament\\Admin\\Clusters')
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
 
-            // 🔥 FIX DASHBOARD TIDAK KOSONG
             ->widgets([
                 \Awcodes\Overlook\Widgets\OverlookWidget::class,
-
-                // ✔ TAMBAHAN WIDGET KAMU
                 \App\Filament\Admin\Widgets\BookingStats::class,
                 \App\Filament\Admin\Widgets\PaymentStats::class,
             ])
@@ -65,12 +62,13 @@ class AdminPanelProvider extends PanelProvider
 
             ->userMenuItems([
                 'profile' => MenuItem::make()
-                    ->label(fn () => auth()->user()->name)
+                    ->label(fn () => auth()->user()?->name ?? 'User')
                     ->url(fn (): string => EditProfilePage::getUrl())
                     ->icon('heroicon-m-user-circle'),
             ])
 
             ->plugins([
+
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
                     ->gridColumns([
                         'default' => 2,
@@ -122,8 +120,13 @@ class AdminPanelProvider extends PanelProvider
                     ->shouldShowAvatarForm(),
             ])
 
+            // 🔥 FIX PENTING: FORCE RESOURCE REGISTRY BACK TO NORMAL BEHAVIOR
             ->resources([
-                config('filament-logger.activity_resource'),
+                \App\Filament\Admin\Resources\BookingResource::class,
+                \App\Filament\Admin\Resources\PackageResource::class,
+                \App\Filament\Admin\Resources\PaymentResource::class,
+                \App\Filament\Admin\Resources\UserResource::class,
+                \App\Filament\Admin\Resources\StudioBlockResource::class ?? null,
             ])
 
             ->viteTheme('resources/css/filament/admin/theme.css')
