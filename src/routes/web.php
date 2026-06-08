@@ -58,11 +58,9 @@ Route::middleware('auth')->group(function () {
 | DEBUG ROUTE (WAJIB DI LUAR middleware auth/guest)
 |--------------------------------------------------------------------------
 */
-Route::get('/debug-auth', function () {
-    return response()->json([
-        'auth' => Auth::check(),
-        'user' => Auth::user(),
-        'session_id' => session()->getId(),
-        'cookies' => request()->cookies->all(),
-    ]);
+Route::get('/debug-guards', function () {
+    return [
+        'web' => auth('web')->user()?->email,
+        'admin' => auth('admin')->user()?->email,
+    ];
 });

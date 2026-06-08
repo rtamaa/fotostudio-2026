@@ -11,40 +11,20 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        // reset cache permission
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         /*
-        |----------------------------------------
-        | PERMISSIONS (Shield akan generate juga)
-        |----------------------------------------
+        |----------------------------------
+        | FORCE GUARD CONSISTENCY
+        |----------------------------------
         */
-
-        $permissions = [
-            // booking
-            'view_booking',
-            'view_any_booking',
-            'create_booking',
-
-            // package (user butuh ini)
-            'view_package',
-            'view_any_package',
-
-            // admin access (optional kalau kamu tetap mau)
-            'access_admin',
-        ];
-
-        foreach ($permissions as $perm) {
-            Permission::firstOrCreate([
-                'name' => $perm,
-                'guard_name' => 'web',
-            ]);
-        }
+        Permission::query()->update(['guard_name' => 'web']);
+        Role::query()->update(['guard_name' => 'web']);
 
         /*
-        |----------------------------------------
+        |----------------------------------
         | ROLES
-        |----------------------------------------
+        |----------------------------------
         */
 
         $admin = Role::firstOrCreate([
@@ -58,25 +38,37 @@ class RolePermissionSeeder extends Seeder
         ]);
 
         /*
-        |----------------------------------------
-        | ADMIN = ALL PERMISSIONS
-        |----------------------------------------
+        |----------------------------------
+        | ADMIN = ALL PERMISSIONS (SAFE SHIELD WAY)
+        |----------------------------------
         */
 
         $admin->syncPermissions(Permission::all());
 
         /*
-        |----------------------------------------
-        | USER = LIMITED PERMISSIONS
-        |----------------------------------------
+        |----------------------------------
+        | USER = LIMITED BUT SAFE ACCESS
+        |----------------------------------
         */
 
-        $user->syncPermissions([
+        $userPermissions = Permission::whereIn('name', [
+
+            // Booking
             'view_booking',
             'view_any_booking',
             'create_booking',
+
+            // Package (wajib untuk pilih paket)
             'view_package',
             'view_any_package',
-        ]);
+
+            // Payment (kalau user bisa lihat pembayaran sendiri)
+            // kalau tidak perlu, hapus ini
+            'view_payment',
+            'view_any_payment',
+
+        ])->pluck('name');
+
+        $user->syncPermissions($userPermissions);
     }
 }

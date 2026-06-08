@@ -18,6 +18,10 @@ class StudioBlockResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-no-symbol';
     protected static ?string $navigationGroup = 'Pengaturan';
 
+    // =========================
+    // FORM
+    // =========================
+
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -37,7 +41,6 @@ class StudioBlockResource extends Resource
                     ->required()
                     ->maxLength(255),
 
-                // 🔥 FIX WAJIB FIELD created_by
                 Forms\Components\Hidden::make('created_by')
                     ->default(fn () => Auth::id()),
             ]),
@@ -70,7 +73,6 @@ class StudioBlockResource extends Resource
             ]);
     }
 
-    // 🔥 OPTIONAL SAFETY (boleh dipakai, tapi sekarang sudah aman tanpa ini)
     public static function mutateFormDataBeforeCreate(array $data): array
     {
         $data['created_by'] = Auth::id();

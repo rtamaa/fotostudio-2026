@@ -18,9 +18,6 @@ class PaymentResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $navigationGroup = 'Transaksi';
 
-    // =========================
-    // FORM
-    // =========================
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -55,9 +52,6 @@ class PaymentResource extends Resource
         ]);
     }
 
-    // =========================
-    // TABLE
-    // =========================
     public static function table(Table $table): Table
     {
         return $table
@@ -89,9 +83,6 @@ class PaymentResource extends Resource
             ->defaultSort('created_at', 'desc');
     }
 
-    // =========================
-    // PAGES
-    // =========================
     public static function getPages(): array
     {
         return [

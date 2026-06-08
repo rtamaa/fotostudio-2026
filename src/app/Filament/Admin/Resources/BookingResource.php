@@ -79,7 +79,7 @@ class BookingResource extends Resource
                         'warning' => 'pending',
                         'danger'  => 'cancelled',
                     ])
-                    ->formatStateUsing(fn ($state) => $state?->label()), // FIX ENUM
+                    ->formatStateUsing(fn ($state) => $state?->label()),
             ])
             ->actions([
                 Tables\Actions\Action::make('confirm_payment')
