@@ -9,6 +9,9 @@ use App\Enums\BookingStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use App\Services\NotificationService;
+use App\Models\BookingLog;
+use App\Enums\PaymentStatus;
 
 class BookingService
 {
@@ -43,6 +46,9 @@ class BookingService
 
         try {
 
+            // =========================
+            // CREATE BOOKING
+            // =========================
             $booking = Booking::create([
                 'user_id'         => auth()->id(),
                 'package_id'      => $package->id,
@@ -53,7 +59,39 @@ class BookingService
                 'booking_status'  => BookingStatus::PENDING,
             ]);
 
+            // =========================
+            // EXISTING JOB (JANGAN DIHAPUS)
+            // =========================
             SendBookingNotificationJob::dispatch($booking);
+
+            // =========================
+            // NOTIFICATION SERVICE (WA + EMAIL)
+            // =========================
+            app(NotificationService::class)
+                ->sendBookingCreated($booking);
+
+            // =========================
+            // AUTO CREATE PAYMENT (FIXED LINKING ISSUE)
+            // =========================
+            $booking->payment()->create([
+                'order_id' => 'ORD-' . $booking->id, // 🔥 FIX: jangan pakai time()
+                'gross_amount' => $package->price,
+                'status' => PaymentStatus::PENDING,
+            ]);
+
+            // =========================
+            // BOOKING LOG
+            // =========================
+            BookingLog::create([
+                'booking_id' => $booking->id,
+                'created_by' => auth()->id(),
+                'action' => 'created',
+                'description' => 'Booking dibuat + payment draft dibuat',
+                'new_data' => [
+                    'booking' => $booking->toArray(),
+                    'payment' => $booking->payment->toArray(),
+                ],
+            ]);
 
             DB::commit();
 

@@ -11,8 +11,6 @@ class User extends Authenticatable implements FilamentUser
 {
     use HasRoles;
 
-    protected string $guard_name = 'admin';
-
     protected $fillable = [
         'name',
         'email',
@@ -22,7 +20,10 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasRole('admin');
+        return $this->roles()
+            ->where('name', 'admin')
+            ->where('guard_name', 'admin')
+            ->exists();
     }
 
     public function isAdmin(): bool

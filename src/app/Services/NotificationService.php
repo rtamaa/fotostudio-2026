@@ -12,7 +12,8 @@ class NotificationService
     {
         $booking->load(['user', 'package']);
 
-        $uploadUrl = route('payment.upload', $booking->id);
+        // ❗ FIX: tidak pakai route() karena tidak ada
+        $uploadUrl = 'Silakan login ke aplikasi → Booking → Upload Bukti Pembayaran setelah transfer.';
 
         $message = $this->buildMessage($booking, $uploadUrl);
 
@@ -82,21 +83,17 @@ Upload bukti pembayaran:
         string $message
     ): void {
 
-        // 1. VALIDASI NOMOR KOSONG
         if (empty($phone)) {
             logger()->warning('WA skipped: phone empty');
             return;
         }
 
-        // 2. CLEAN INPUT
         $phone = trim($phone);
 
-        // 3. AUTO FORMAT 08 → 62
         if (str_starts_with($phone, '08')) {
             $phone = '62' . substr($phone, 1);
         }
 
-        // 4. HAPUS KARAKTER ANEH
         $phone = preg_replace('/[^0-9]/', '', $phone);
 
         try {
@@ -109,14 +106,12 @@ Upload bukti pembayaran:
                 'message' => $message,
             ]);
 
-            // 🔥 DEBUG RESPONSE (INI YANG PENTING)
             logger()->info('FONNTE RESPONSE', [
                 'phone' => $phone,
                 'status_code' => $response->status(),
                 'body' => $response->body()
             ]);
 
-            // ❗ TAMBAHAN: kalau gagal langsung keliatan
             if ($response->failed()) {
                 logger()->error('FONNTE FAILED', [
                     'phone' => $phone,

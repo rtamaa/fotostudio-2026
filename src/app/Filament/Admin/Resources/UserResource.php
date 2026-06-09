@@ -4,13 +4,13 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\UserResource\Pages;
 use App\Models\User;
-use App\Enums\UserRole;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -26,28 +26,34 @@ class UserResource extends Resource
                     ->schema([
                         Forms\Components\Grid::make(2)
                             ->schema([
+
                                 Forms\Components\TextInput::make('name')
                                     ->required()
                                     ->maxLength(255),
-                                
+
                                 Forms\Components\TextInput::make('email')
                                     ->required()
                                     ->email()
                                     ->unique(ignoreRecord: true),
-                                
+
                                 Forms\Components\TextInput::make('phone')
                                     ->label('No. WhatsApp')
                                     ->tel()
                                     ->maxLength(20),
-                                
+
+                                // =========================
+                                // SPATIE ROLE REPLACEMENT
+                                // =========================
                                 Forms\Components\Select::make('role')
-                                    ->options([
-                                        UserRole::USER->value => UserRole::USER->label(),
-                                        UserRole::ADMIN->value => UserRole::ADMIN->label(),
-                                    ])
+                                    ->label('Role')
+                                    ->options(
+                                        Role::where('guard_name', 'admin')
+                                            ->pluck('name', 'name')
+                                            ->toArray()
+                                    )
                                     ->required()
-                                    ->default(UserRole::USER->value),
-                                
+                                    ->default('user'),
+
                                 Forms\Components\TextInput::make('password')
                                     ->password()
                                     ->dehydrated(fn ($state) => filled($state))
@@ -65,26 +71,29 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
+
                 Tables\Columns\TextColumn::make('email')
                     ->searchable()
                     ->copyable(),
+
                 Tables\Columns\TextColumn::make('phone')
                     ->label('WhatsApp'),
-                Tables\Columns\BadgeColumn::make('role')
-                    ->colors([
-                        'primary' => 'admin',
-                        'gray' => 'user',
-                    ]),
+
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Role')
+                    ->badge(),
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d M Y')
                     ->sortable(),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('role')
-                    ->options([
-                        'user' => 'User',
-                        'admin' => 'Admin',
-                    ]),
+                    ->options(
+                        Role::where('guard_name', 'admin')
+                            ->pluck('name', 'name')
+                            ->toArray()
+                    ),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
