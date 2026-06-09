@@ -11,6 +11,8 @@ class User extends Authenticatable implements FilamentUser
 {
     use HasRoles;
 
+    protected string $guard_name = 'admin';
+
     protected $fillable = [
         'name',
         'email',
@@ -23,14 +25,8 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasRole('admin');
     }
 
-    // 🔥 TAMBAHAN PENTING (FIX ERROR isAdmin)
     public function isAdmin(): bool
     {
         return $this->hasRole('admin');
-    }
-
-    public function bookings()
-    {
-        return $this->hasMany(Booking::class);
     }
 }

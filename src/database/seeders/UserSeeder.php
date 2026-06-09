@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
         // =========================
         // CREATE ROLES FIRST
         // =========================
-        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'admin']);
         Role::firstOrCreate(['name' => 'user', 'guard_name' => 'web']);
 
         // =========================
