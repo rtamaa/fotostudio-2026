@@ -1,4 +1,4 @@
-<div>
+<div wire:poll.5s="refreshSlots">
     <div class="max-w-6xl mx-auto px-4 py-8">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
             <div class="bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-6">
@@ -33,7 +33,7 @@
             @if($selectedPackage)
                 <div class="p-6">
                     <h3 class="font-semibold mb-4">Slot Tersedia untuk {{ \Carbon\Carbon::parse($selectedDate)->format('d M Y') }}</h3>
-                    
+
                     @if(count($availableSlots) > 0)
                         <div class="grid grid-cols-3 md:grid-cols-5 gap-3">
                             @foreach($availableSlots as $slot)

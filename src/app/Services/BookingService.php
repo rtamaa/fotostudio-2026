@@ -9,7 +9,6 @@ use App\Enums\BookingStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
-use App\Services\NotificationService;
 use App\Models\BookingLog;
 use App\Enums\PaymentStatus;
 
@@ -27,7 +26,7 @@ class BookingService
         $package = Package::findOrFail($data['package_id']);
 
         $endTime = Carbon::parse(
-            $data['booking_date'] . ' ' . $data['start_time']
+            $data['booking_date'].' '.$data['start_time']
         )->addMinutes($package->duration);
 
         if (
@@ -38,7 +37,7 @@ class BookingService
         ) {
             return [
                 'success' => false,
-                'message' => 'Slot sudah dibooking orang lain!'
+                'message' => 'Slot sudah dibooking orang lain!',
             ];
         }
 
@@ -46,9 +45,24 @@ class BookingService
 
         try {
 
-            // =========================
-            // CREATE BOOKING
-            // =========================
+            if (
+                Booking::where('booking_date', $data['booking_date'])
+                    ->where('start_time', $data['start_time'])
+                    ->whereIn('booking_status', [
+                        BookingStatus::PENDING,
+                        BookingStatus::CONFIRMED,
+                    ])
+                    ->lockForUpdate()
+                    ->exists()
+            ) {
+                DB::rollBack();
+
+                return [
+                    'success' => false,
+                    'message' => 'Maaf, slot baru saja diambil user lain. Silakan pilih jam lain.',
+                ];
+            }
+
             $booking = Booking::create([
                 'user_id'         => auth()->id(),
                 'package_id'      => $package->id,
@@ -59,29 +73,16 @@ class BookingService
                 'booking_status'  => BookingStatus::PENDING,
             ]);
 
-            // =========================
-            // EXISTING JOB (JANGAN DIHAPUS)
-            // =========================
             SendBookingNotificationJob::dispatch($booking);
 
-            // =========================
-            // NOTIFICATION SERVICE (WA + EMAIL)
-            // =========================
-            app(NotificationService::class)
-                ->sendBookingCreated($booking);
+            if (!$booking->payment()->exists()) {
+                $booking->payment()->create([
+                    'order_id'     => 'ORD-' . $booking->id,
+                    'gross_amount' => $package->price,
+                    'status'       => PaymentStatus::PENDING,
+                ]);
+            }
 
-            // =========================
-            // AUTO CREATE PAYMENT (FIXED LINKING ISSUE)
-            // =========================
-            $booking->payment()->create([
-                'order_id' => 'ORD-' . $booking->id, // 🔥 FIX: jangan pakai time()
-                'gross_amount' => $package->price,
-                'status' => PaymentStatus::PENDING,
-            ]);
-
-            // =========================
-            // BOOKING LOG
-            // =========================
             BookingLog::create([
                 'booking_id' => $booking->id,
                 'created_by' => auth()->id(),
@@ -89,7 +90,6 @@ class BookingService
                 'description' => 'Booking dibuat + payment draft dibuat',
                 'new_data' => [
                     'booking' => $booking->toArray(),
-                    'payment' => $booking->payment->toArray(),
                 ],
             ]);
 

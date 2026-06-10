@@ -29,6 +29,14 @@ class Calendar extends Component
         $this->availableSlots = $slotService->getAvailableSlots($this->selectedDate);
     }
 
+    // =========================
+    // AUTO REFRESH SLOT
+    // =========================
+    public function refreshSlots()
+    {
+        $this->loadData();
+    }
+
     public function selectDate($date)
     {
         $this->selectedDate = $date;
@@ -54,9 +62,11 @@ class Calendar extends Component
     public function previousDay()
     {
         $this->selectedDate = Carbon::parse($this->selectedDate)->subDay()->format('Y-m-d');
+
         if (Carbon::parse($this->selectedDate)->isToday()) {
             $this->selectedDate = Carbon::now()->addDay()->format('Y-m-d');
         }
+
         $this->loadData();
     }
 

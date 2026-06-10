@@ -54,34 +54,7 @@ class Booking extends Model
     }
 
     // =========================
-    // AUTO PAYMENT (FIX UTAMA KAMU)
-    // =========================
-    protected static function booted()
-    {
-        static::created(function ($booking) {
-
-            // cegah duplicate payment
-            if ($booking->payment()->exists()) {
-                return;
-            }
-
-            // pastikan package ada
-            $package = $booking->package;
-
-            if (!$package) {
-                return;
-            }
-
-            $booking->payment()->create([
-                'order_id' => 'ORD-' . $booking->id,
-                'gross_amount' => $package->price,
-                'status' => \App\Enums\PaymentStatus::PENDING,
-            ]);
-        });
-    }
-
-    // =========================
-    // OPTIONAL HELPER (TAMBAHAN AMAN)
+    // OPTIONAL HELPER
     // =========================
     public function hasPayment(): bool
     {
