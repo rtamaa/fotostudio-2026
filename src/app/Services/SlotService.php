@@ -11,18 +11,23 @@ class SlotService
     public function generateTimeSlots(string $date): array
     {
         $start = Carbon::parse($date . ' 09:00:00');
-        $end = Carbon::parse($date . ' 17:00:00');
+        $end   = Carbon::parse($date . ' 17:00:00');
+
         $slots = [];
 
         while ($start < $end) {
+
             $slotStart = $start->copy();
-            $slotEnd = $start->copy()->addMinutes(20);
+            $slotEnd   = $start->copy()->addMinutes(20);
 
             if ($slotEnd <= $end) {
                 $slots[] = [
-                    'start' => $slotStart->format('H:i'),
-                    'end' => $slotEnd->format('H:i'),
+                    'start'   => $slotStart->format('H:i'),
+                    'end'     => $slotEnd->format('H:i'),
                     'display' => $slotStart->format('H:i') . ' - ' . $slotEnd->format('H:i'),
+
+                    // default state
+                    'status'  => 'available',
                 ];
             }
 
@@ -36,20 +41,40 @@ class SlotService
     {
         $allSlots = $this->generateTimeSlots($date);
 
-        $booked = Booking::where('booking_date', $date)
+        $bookings = Booking::where('booking_date', $date)
             ->whereNotIn('booking_status', [
                 BookingStatus::CANCELLED,
             ])
             ->get()
-            ->map(fn ($b) => Carbon::parse($b->start_time)->format('H:i'))
-            ->toArray();
+            ->keyBy(fn ($b) => Carbon::parse($b->start_time)->format('H:i'));
 
-        return array_values(
-            array_filter(
-                $allSlots,
-                fn ($slot) => !in_array($slot['start'], $booked)
-            )
-        );
+        return array_map(function ($slot) use ($bookings) {
+
+            $time = $slot['start'];
+            $booking = $bookings[$time] ?? null;
+
+            // =========================
+            // SLOT STATUS ENGINE
+            // =========================
+            if (!$booking) {
+                $slot['status'] = 'available';
+                return $slot;
+            }
+
+            $slot['status'] = match ($booking->booking_status) {
+
+                BookingStatus::PENDING   => 'pending',
+
+                BookingStatus::CONFIRMED => 'confirmed',
+
+                BookingStatus::CANCELLED => 'blocked',
+
+                default                  => 'available',
+            };
+
+            return $slot;
+
+        }, $allSlots);
     }
 
     public function isSlotAvailable(string $date, string $startTime): bool
