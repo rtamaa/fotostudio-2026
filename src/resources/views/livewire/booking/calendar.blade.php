@@ -19,11 +19,13 @@
                     @endfor
                 </select>
 
-                <select wire:model="currentYear" class="border rounded px-3 py-2">
-                    @for($y = date('Y') - 2; $y <= date('Y') + 2; $y++)
-                        <option value="{{ $y }}">{{ $y }}</option>
-                    @endfor
-                </select>
+                <select wire:model="currentYear"
+                    class="border rounded px-4 py-2"
+                    style="width:120px">
+                @for($y = date('Y'); $y <= date('Y') + 10; $y++)
+                    <option value="{{ $y }}">{{ $y }}</option>
+                @endfor
+            </select>
 
             </div>
 

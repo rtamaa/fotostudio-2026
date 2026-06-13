@@ -16,6 +16,7 @@ class PackageResource extends Resource
     protected static ?string $model = Package::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-gift';
+
     protected static ?string $navigationGroup = 'Master Data';
 
     public static function form(Form $form): Form
@@ -30,7 +31,8 @@ class PackageResource extends Resource
                                     ->required()
                                     ->maxLength(100)
                                     ->reactive()
-                                    ->afterStateUpdated(fn ($state, callable $set) =>
+                                    ->afterStateUpdated(
+                                        fn ($state, callable $set) =>
                                         $set('slug', Str::slug($state))
                                     ),
 
@@ -64,10 +66,6 @@ class PackageResource extends Resource
                         Forms\Components\Textarea::make('short_description')
                             ->rows(2),
 
-                        Forms\Components\FileUpload::make('image_url')
-                            ->image()
-                            ->directory('packages'),
-
                         Forms\Components\Toggle::make('is_active')
                             ->label('Aktif')
                             ->default(true),
@@ -79,10 +77,6 @@ class PackageResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('image_url')
-                    ->circular()
-                    ->width(50),
-
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),

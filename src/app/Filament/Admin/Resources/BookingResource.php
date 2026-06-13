@@ -18,6 +18,14 @@ class BookingResource extends Resource
 {
     protected static ?string $model = Booking::class;
 
+    // =========================
+    // NAVIGATION
+    // =========================
+    protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
+    protected static ?string $navigationLabel = 'Booking';
+    protected static ?string $navigationGroup = 'Transaksi';
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         $slotService = app(SlotService::class);
@@ -38,20 +46,25 @@ class BookingResource extends Resource
             Forms\Components\Select::make('start_time')
                 ->options(function (callable $get) use ($slotService) {
                     $date = $get('booking_date');
-                    if (!$date) return [];
 
-                    return collect($slotService->getAvailableSlots($date))
-                        ->pluck('display', 'start');
+                    if (! $date) {
+                        return [];
+                    }
+
+                    return collect(
+                        $slotService->getAvailableSlots($date)
+                    )->pluck('display', 'start');
                 })
                 ->required(),
 
             Forms\Components\Textarea::make('special_request'),
 
             Forms\Components\Select::make('booking_status')
-                ->options(collect(BookingStatus::cases())
-                    ->mapWithKeys(fn ($status) => [
-                        $status->value => $status->label()
-                    ])
+                ->options(
+                    collect(BookingStatus::cases())
+                        ->mapWithKeys(fn ($status) => [
+                            $status->value => $status->label(),
+                        ])
                 )
                 ->required(),
         ]);
@@ -77,22 +90,33 @@ class BookingResource extends Resource
                     ->colors([
                         'success' => 'confirmed',
                         'warning' => 'pending',
-                        'danger'  => 'cancelled',
+                        'danger' => 'cancelled',
                     ])
-                    ->formatStateUsing(fn ($state) => $state?->label()),
+                    ->formatStateUsing(
+                        fn ($state) => $state?->label()
+                    ),
             ])
             ->actions([
                 Tables\Actions\Action::make('confirm_payment')
-                    ->action(function (Booking $record, BookingService $service) {
+                    ->action(function (
+                        Booking $record,
+                        BookingService $service
+                    ) {
                         $result = $service->confirmBooking($record);
 
                         Notification::make()
-                            ->title($result['success'] ? 'Berhasil' : 'Gagal')
+                            ->title(
+                                $result['success']
+                                    ? 'Berhasil'
+                                    : 'Gagal'
+                            )
                             ->body($result['message'] ?? '')
                             ->success()
                             ->send();
                     })
-                    ->visible(fn (Booking $record) => $record->isPending()),
+                    ->visible(
+                        fn (Booking $record) => $record->isPending()
+                    ),
             ]);
     }
 

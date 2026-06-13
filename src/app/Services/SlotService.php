@@ -42,9 +42,10 @@ class SlotService
         $allSlots = $this->generateTimeSlots($date);
 
         $bookings = Booking::where('booking_date', $date)
-            ->whereNotIn('booking_status', [
-                BookingStatus::CANCELLED,
-            ])
+            ->where(function ($q) {
+                $q->where('booking_status', '!=', 'cancelled')
+                  ->where('booking_status', '!=', BookingStatus::CANCELLED->value);
+            })
             ->get()
             ->keyBy(fn ($b) => Carbon::parse($b->start_time)->format('H:i'));
 
@@ -61,15 +62,18 @@ class SlotService
                 return $slot;
             }
 
-            $slot['status'] = match ($booking->booking_status) {
+            // AMAN: support enum + string DB
+            $status = $booking->booking_status instanceof BookingStatus
+                ? $booking->booking_status
+                : BookingStatus::tryFrom($booking->booking_status);
+
+            $slot['status'] = match ($status) {
 
                 BookingStatus::PENDING   => 'pending',
-
                 BookingStatus::CONFIRMED => 'confirmed',
-
                 BookingStatus::CANCELLED => 'blocked',
 
-                default                  => 'available',
+                default => 'available',
             };
 
             return $slot;
@@ -83,6 +87,7 @@ class SlotService
             ->where('start_time', $startTime)
             ->whereNotIn('booking_status', [
                 BookingStatus::CANCELLED,
+                'cancelled',
             ])
             ->exists();
     }
