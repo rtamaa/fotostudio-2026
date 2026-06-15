@@ -6,6 +6,7 @@ use App\Enums\BookingStatus;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Payment;
 use App\Models\BookingLog;
+use App\Models\Review;
 
 class Booking extends Model
 {
@@ -51,6 +52,14 @@ class Booking extends Model
     public function logs()
     {
         return $this->hasMany(BookingLog::class);
+    }
+
+    // =========================
+    // REVIEW RELATION (BARU)
+    // =========================
+    public function review()
+    {
+        return $this->hasOne(Review::class);
     }
 
     // =========================

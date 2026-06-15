@@ -187,18 +187,22 @@
         @auth
 
         @php
-            $canReview = \App\Models\Booking::where('user_id', auth()->id())
-                ->where('booking_status','confirmed')
-                ->exists();
-
-            $alreadyReviewed = \App\Models\Review::where('user_id', auth()->id())->exists();
+        $bookingToReview = \App\Models\Booking::where('user_id', auth()->id())
+            ->where('booking_status', 'confirmed')
+            ->whereDoesntHave('review')
+            ->latest()
+            ->first();
         @endphp
 
-        @if($canReview && !$alreadyReviewed)
+        @if($bookingToReview)
 
         <form action="{{ route('review.store') }}" method="POST"
               class="bg-white p-6 rounded-xl shadow mb-10">
             @csrf
+
+            <input type="hidden"
+                name="booking_id"
+                value="{{ $bookingToReview->id }}">
 
             <select name="rating" class="border w-full p-2 mb-3">
                 <option value="5">⭐⭐⭐⭐⭐</option>
